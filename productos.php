@@ -3,8 +3,14 @@ include('lib.php');
 
 $conexion = conectarse($servidor, $usuarioservidor, $claveservidor, $bbdd, $puerto);
 
-$sql = 'SELECT producto, precio, stock FROM productos;';
+if (isset($_GET['idborra'])) {
+    if ($_GET['idborra'] > 0) {
+        $borrasql = 'DELETE FROM productos WHERE id=' . $_GET['idborra'];
+        mysqli_query($conexion, $borrasql);
+    }
+}
 
+$sql = 'SELECT id, producto, precio, stock FROM productos;';
 $consulta = mysqli_query($conexion, $sql);
 
 $resultado = '';
@@ -15,20 +21,22 @@ $resultado .= '<th>precio</th>';
 $resultado .= '<th>IVA</th>';
 $resultado .= '<th>PVP</th>';
 $resultado .= '<th>stock</th>';
+$resultado .= '<th>Acción</th>';
 $resultado .= '</tr>';
 
 while($reg = mysqli_fetch_array($consulta)){
-    $precio = $reg['precio'];
-    $iva = $precio * 0.21;
-    $pvp = $precio + $iva;
+$precio = $reg['precio'];
+$iva = $precio * 0.21;
+$pvp = $precio + $iva;
 
-    $resultado .= '<tr>';
-    $resultado .= '<td>'.$reg['producto'].'</td>';
-    $resultado .= '<td>'.$precio.'</td>';
-    $resultado .= '<td>'.$iva.'</td>';
-    $resultado .= '<td>'.$pvp.'</td>';
-    $resultado .= '<td>'.$reg['stock'].'</td>';
-    $resultado .= '</tr>';
+$resultado .= '<tr>';
+$resultado .= '<td>'.$reg['producto'].'</td>';
+$resultado .= '<td>'.$reg['precio'].'</td>';
+$resultado .= '<td>'.$iva.'</td>';
+$resultado .= '<td>'.$pvp.'</td>';
+$resultado .= '<td>'.$reg['stock'].'</td>';
+$resultado .= '<td><a href="productos.php?idborra='.$reg['id'].'"><img src="img/papelera.png" width="20" height="20"></a></td>';
+$resultado .= '</tr>';
 }
 
 $resultado .= '</table>';
