@@ -1,25 +1,25 @@
 <?php
-session_start();
 include('lib.php');
-$conexion = conectarse();
 
-$usuario = $_POST['usuario'];
-$clave = $_POST['clave'];
+$conexion = conectarse($servidor,$usuarioservidor,$claveservidor,$bbdd,$puerto);
 
-$sql = "SELECT * FROM users WHERE user='$usuario' AND password='$clave'";
-$consulta = mysqli_query($conexion, $sql);
+$sql = 'SELECT * FROM users WHERE user="'. $_POST['usuario'] .'" AND password="'. $_POST['clave'] .'"';
+$consulta = mysqli_query($conexion,$sql);
 
 if(mysqli_num_rows($consulta) > 0){
-    $datos = mysqli_fetch_assoc($consulta);
-    $_SESSION['user_id'] = $datos['id'];
-    $_SESSION['user'] = $datos['user'];
+    // Identificación correcta
+    $_SESSION['usuario'] = $_POST['usuario'];
 
-    $id_usuario = $datos['id'];
-    $sql_acceso = "INSERT INTO accesos (user_id, fechahora) VALUES ($id_usuario, NOW())";
-    mysqli_query($conexion, $sql_acceso);
+    $reg = mysqli_fetch_array($consulta);
+
+    $ahora = date('Y-m-d H:i:s');
+
+    $sqlAcceso = 'INSERT INTO accesos (user_id,fechahora) VALUES('.$reg['id'].',"'.$ahora.'");';
+    mysqli_query($conexion,$sqlAcceso);
 
     header('Location: portada.php');
-} else {
+}else{
+    // Identificación incorrecta
     header('Location: index.php');
 }
 ?>
