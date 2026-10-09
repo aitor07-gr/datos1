@@ -1,25 +1,25 @@
 <?php
-session_start();
 include('lib.php');
-$conexion = conectarse();
 
-$user_id = $_SESSION['user_id'];
+$conexion = conectarse($servidor,$usuarioservidor,$claveservidor,$bbdd,$puerto);
 
-$sql = "SELECT COUNT(*) AS total FROM departamentos WHERE user_id = $user_id";
-$consulta = mysqli_query($conexion, $sql);
-$datos = mysqli_fetch_assoc($consulta);
+$sql = 'SELECT * FROM departamentos WHERE user="'.$_SESSION['usuario'].'";';
 
-$departamentos = $datos['total'];
+$consulta = mysqli_query($conexion,$sql);
+
+echo mysqli_num_rows($consulta);
+
+
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
 <body>
-
-<h1>Bienvenido, <?php echo $_SESSION['user']; ?></h1>
-
-<p>Tienes asignados <strong><?php echo $departamentos; ?></strong> departamentos.</p>
-
+    
 </body>
 </html>
 
