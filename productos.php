@@ -1,45 +1,36 @@
 <?php
 include('lib.php');
 
-$conexion = conectarse($servidor, $usuarioservidor, $claveservidor, $bbdd, $puerto);
+$conexion = conectarse($servidor,$usuarioservidor,$claveservidor,$bbdd,$puerto);
 
-if (isset($_GET['idborra'])) {
-    if ($_GET['idborra'] > 0) {
-        $borrasql = 'DELETE FROM productos WHERE id = ' . $_GET['idborra'];
-        mysqli_query($conexion, $borrasql);
+if(isset($_GET['idborra'])){
+    if($_GET['idborra']>0){
+        $sqlborra = 'DELETE FROM productos WHERE id = '.$_GET['idborra'].';';
+        mysqli_query($conexion,$sqlborra);
+        header('Location: productos.php');
     }
 }
 
-$sql = 'SELECT id, producto, precio, stock FROM productos;';
-$consulta = mysqli_query($conexion, $sql);
+
+$sql = 'SELECT * FROM productos;';
+
+$consulta = mysqli_query($conexion,$sql);
 
 $resultado = '';
-$resultado .= '<table>';
-$resultado .= '<tr>';
-$resultado .= '<th>producto</th>';
-$resultado .= '<th>precio</th>';
-$resultado .= '<th>IVA</th>';
-$resultado .= '<th>PVP</th>';
-$resultado .= '<th>stock</th>';
-$resultado .= '<th>Acción</th>';
-$resultado .= '</tr>';
 
-while($reg = mysqli_fetch_array($consulta)){
-    $precio = $reg['precio'];
-    $iva = $precio * 0.21;
-    $pvp = $precio + $iva;
-
-    $resultado .= '<tr>';
-    $resultado .= '<td><a href="producto_detalle.php?idproducto='.$reg['id'].'">'.$reg['producto'].'</a></td>';
-    $resultado .= '<td>'.$precio.'</td>';
-    $resultado .= '<td>'.$iva.'</td>';
-    $resultado .= '<td>'.$pvp.'</td>';
-    $resultado .= '<td>'.$reg['stock'].'</td>';
-    $resultado .= '<td><a href="productos.php?idborra='.$reg['id'].'"><img src="img/papelera.png" width="20" height="20"></a></td>';
-    $resultado .= '</tr>';
+while($r = mysqli_fetch_array($consulta)){
+    $resultado.= '<tr>';
+        $resultado.= '<td>'.$r['id'].'</td>';
+        $resultado.= '<td>'.$r['producto'].'</td>';
+        $resultado.= '<td>'.$r['precio'].'</td>';
+        $resultado.= '<td>'.$r['stock'].'</td>';
+        $resultado.= '<td><img src="img/'.$r['foto'].'" width="150" alt="'.$r['producto'].'"></td>';
+        $resultado.= '<td><a href="productos.php?idborra='.$r['id'].'">Borrar</a></td>';
+        $resultado.= '<td><a href="productos_edit.php?idproducto='.$r['id'].'">Editar</a></td>';
+        $resultado.= '<td><a href="productos_detalle.php?idproducto='.$r['id'].'">Detalle</a></td>';
+    $resultado.= '</tr>';
 }
 
-$resultado .= '</table>';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,6 +40,18 @@ $resultado .= '</table>';
     <title>Document</title>
 </head>
 <body>
-    <?php echo $resultado; ?>
+    <table>
+        <tr>
+            <th>Id</th>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Foto</th>
+            <th>-</th>
+        </tr>
+
+        <?php echo $resultado ?>
+
+    </table>
 </body>
 </html>
